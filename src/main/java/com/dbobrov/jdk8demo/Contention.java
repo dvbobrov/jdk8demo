@@ -1,4 +1,4 @@
-package bechmarks;
+package com.dbobrov.jdk8demo;
 
 import org.openjdk.jmh.annotations.*;
 import sun.misc.Contended;

@@ -1,24 +1,26 @@
-package tests;
+package com.dbobrov.jdk8demo;
 
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.OptionalInt;
 import java.util.stream.IntStream;
 
+import static java.util.Arrays.asList;
+import static java.util.Arrays.stream;
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertThat;
 
 public class Streams {
     @Test
     public void test0() {
-        List<String> strings = Arrays.asList("a", "aa", "aaa", "aaaa", "aaaaa");
+        List<String> strings = asList("a", "aa", "aaa", "aaaa", "aaaaa");
 
         OptionalInt any = strings.stream().filter(s -> s.length() % 2 == 0).mapToInt(String::length).max();
         Assert.assertTrue(any.isPresent());
-        Assert.assertThat(any.getAsInt(), is(4));
+        assertThat(any.getAsInt(), is(4));
     }
 
 
@@ -46,12 +48,12 @@ public class Streams {
     @Test
     public void test1() {
         String[] args = {"1  2", " 3 ", "4", "10 -100"};
-        int sum = Arrays
-                .stream(args)
-                .flatMap(s -> Arrays.stream(s.trim().split("\\s+")))
+        int sum =
+                stream(args)
+                .flatMap(s -> stream(s.trim().split("\\s+")))
                 .mapToInt(Integer::parseInt).sum();
 
-        Assert.assertThat(sum, is(-80));
+        assertThat(sum, is(-80));
     }
 
 
@@ -111,7 +113,7 @@ public class Streams {
 
 
     private void test(int[] d) {
-        Assert.assertArrayEquals(new int[] {0, 1, 2, 2, 2}, d);
+        assertArrayEquals(new int[]{0, 1, 2, 2, 2}, d);
     }
 
 
@@ -122,10 +124,10 @@ public class Streams {
         }
         d[0] = 0;
 
-        g[0] = Arrays.asList(1);
-        g[1] = Arrays.asList(0, 2, 3, 4);
-        g[2] = Arrays.asList(1, 3);
-        g[3] = Arrays.asList(1, 2);
-        g[4] = Arrays.asList(1);
+        g[0] = asList(1);
+        g[1] = asList(0, 2, 3, 4);
+        g[2] = asList(1, 3);
+        g[3] = asList(1, 2);
+        g[4] = asList(1);
     }
 }

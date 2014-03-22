@@ -1,5 +1,6 @@
-package tests;
+package com.dbobrov.jdk8demo;
 
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
@@ -145,8 +146,8 @@ public class Lambdas {
 
 
 
-
-    public static interface CustomLambda {
+    @Ignore
+    private static interface CustomLambda {
         int f(int a, int b);
     }
 
@@ -270,16 +271,13 @@ public class Lambdas {
 
 
 
-
-
     // :(
     private IntUnaryOperator fib /* = (n) -> n == 0 || n == 1 ? 1 : fib.applyAsInt(n - 1) + fib.applyAsInt(n - 2); */;
-    {
-        fib = (n) -> n == 0 || n == 1 ? 1 : fib.applyAsInt(n - 1) + fib.applyAsInt(n - 2);
-    }
+
     @Test
     public void testRecursiveLambda() {
         System.out.println(testName.getMethodName());
+        fib = (n) -> n == 0 || n == 1 ? 1 : fib.applyAsInt(n - 1) + fib.applyAsInt(n - 2);
 
         System.out.println(fib.applyAsInt(5));
         System.out.println("---------------------");

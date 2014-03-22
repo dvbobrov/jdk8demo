@@ -1,4 +1,4 @@
-package tests;
+package com.dbobrov.jdk8demo;
 
 
 import org.junit.Assert;
