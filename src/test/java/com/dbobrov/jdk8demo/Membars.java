@@ -7,9 +7,10 @@ import sun.misc.Unsafe;
 
 import java.lang.reflect.Field;
 
+import static org.hamcrest.core.Is.is;
+
 public class Membars {
     int a, b, c, d;
-
 
     Unsafe unsafe;
     {

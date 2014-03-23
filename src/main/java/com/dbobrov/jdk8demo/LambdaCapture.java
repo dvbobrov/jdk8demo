@@ -7,12 +7,12 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 
-@BenchmarkMode(Mode.AverageTime)
+@BenchmarkMode(Mode.Throughput)
 @Warmup(iterations = 5)
 @Fork(1)
 @Measurement(iterations = 5)
 @State(Scope.Thread)
-@OutputTimeUnit(TimeUnit.NANOSECONDS)
+@OutputTimeUnit(TimeUnit.MICROSECONDS)
 public class LambdaCapture {
     private Random random;
     private String s;

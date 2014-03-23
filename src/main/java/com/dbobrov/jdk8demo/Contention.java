@@ -142,20 +142,20 @@ public class Contention {
 
 
     @State(Scope.Group)
-    public static class ContentedIntPair {
+    public static class ContendedIntPair {
         int a;
         @Contended int b;
     }
 
     @GenerateMicroBenchmark
-    @Group("contented")
-    public void contentedInc(ContentedIntPair pair) {
+    @Group("contended")
+    public void contendedInc(ContendedIntPair pair) {
         pair.a++;
     }
 
     @GenerateMicroBenchmark
-    @Group("contented")
-    public int contentedGet(ContentedIntPair pair) {
+    @Group("contended")
+    public int contendedGet(ContendedIntPair pair) {
         return pair.b;
     }
 }

@@ -1,20 +1,23 @@
 package com.dbobrov.jdk8demo;
 
 import org.junit.Ignore;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TestName;
 
 import java.util.*;
-import java.util.function.*;
+import java.util.function.Function;
+import java.util.function.IntUnaryOperator;
+import java.util.function.ToIntBiFunction;
+import java.util.function.ToIntFunction;
+import java.util.stream.IntStream;
+
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 public class Lambdas {
-    @Rule
-    public TestName testName = new TestName();
 
     @Test
     public void comparatorOld() {
-        System.out.println(testName.getMethodName());
         List<String> list = new ArrayList<>();
         list.add("abacaba");
         list.add("fasd");
@@ -29,36 +32,12 @@ public class Lambdas {
             }
         });
 
-        System.out.println(list.toString());
-        System.out.println("---------------------");
-
+        assertThat(list.get(0), is("jdjjssf"));
+        assertThat(list.get(4), is("aasfcvd"));
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     @Test
     public void comparatorLambda() {
-        System.out.println(testName.getMethodName());
         List<String> list = new ArrayList<>();
         list.add("abacaba");
         list.add("fasd");
@@ -70,41 +49,12 @@ public class Lambdas {
             return b.compareTo(a);
         });
 
-        System.out.println(list.toString());
-        System.out.println("---------------------");
-
+        assertThat(list.get(0), is("jdjjssf"));
+        assertThat(list.get(4), is("aasfcvd"));
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     @Test
     public void comparatorLambdaShort() {
-        System.out.println(testName.getMethodName());
-
         List<String> list = new ArrayList<>();
         list.add("abacaba");
         list.add("fasd");
@@ -114,75 +64,10 @@ public class Lambdas {
 
         Collections.sort(list, (a, b) -> b.compareTo(a));
 
-        System.out.println(list.toString());
-        System.out.println("---------------------");
+        assertThat(list.get(0), is("jdjjssf"));
+        assertThat(list.get(4), is("aasfcvd"));
 
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    @Ignore
-    private static interface CustomLambda {
-        int f(int a, int b);
-    }
-
-
-
-
-
-
-
-
-
-
-    @Test
-    public void customLambdaClass() {
-        System.out.println(testName.getMethodName());
-
-        CustomLambda lambda = (a, b) -> Math.max(a, b);
-
-        System.out.println(lambda.f(73, 42));
-        System.out.println("---------------------");
-
-    }
-
-
-    @Test
-    public void methodReference() {
-        System.out.println(testName.getMethodName());
-
-        CustomLambda lambda = Math::max;
-
-        System.out.println(lambda.f(42, 73));
-        System.out.println("---------------------");
-
-    }
-
 
 
 
@@ -200,56 +85,15 @@ public class Lambdas {
 
     @Test
     public void libraryLambdaClasses() {
-        System.out.println(testName.getMethodName());
-
         Function<String, Integer> function = String::length;
-
-        System.out.println(function.apply("abacaba"));
-
+        assertThat(function.apply("abacaba"), is(7));
 
         ToIntFunction<String> toIntFunction = String::length;
-        System.out.println(toIntFunction.applyAsInt("abacaba"));
+        assertThat(toIntFunction.applyAsInt("abacaba"), is(7));
 
         ToIntBiFunction<Integer, Integer> max = Math::max;
-        System.out.println(max.applyAsInt(42, 73));
-        System.out.println("---------------------");
-
+        assertThat(max.applyAsInt(73, 42), is(73));
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -272,16 +116,14 @@ public class Lambdas {
 
 
     // :(
-    private IntUnaryOperator fib /* = (n) -> n == 0 || n == 1 ? 1 : fib.applyAsInt(n - 1) + fib.applyAsInt(n - 2); */;
+    private IntUnaryOperator fib /* = (n) -> n < 2 ? 1 :
+                fib.applyAsInt(n - 1) + fib.applyAsInt(n - 2); */;
 
     @Test
     public void testRecursiveLambda() {
-        System.out.println(testName.getMethodName());
-        fib = (n) -> n == 0 || n == 1 ? 1 : fib.applyAsInt(n - 1) + fib.applyAsInt(n - 2);
+        fib = (n) -> n < 2 ? 1 : fib.applyAsInt(n - 1) + fib.applyAsInt(n - 2);
 
-        System.out.println(fib.applyAsInt(5));
-        System.out.println("---------------------");
-
+        assertThat(fib.applyAsInt(5), is(8));
     }
 
 
@@ -298,6 +140,52 @@ public class Lambdas {
 
 
 
+
+
+
+    @Ignore
+    private static interface Func {
+        int f(int a, int b);
+    }
+
+
+    @Ignore
+    @FunctionalInterface
+    private static interface FuncAnnotated {
+        int f(int x);
+//        int g(int x); // Will not compile if this line is uncommented
+    }
+
+
+
+
+    @Test
+    public void customLambdaClass() {
+
+        Func lambda = (a, b) -> Math.max(a, b);
+        assertThat(lambda.f(73, 42), is(73));
+
+        FuncAnnotated lambda2 = a -> a * a;
+        assertThat(lambda2.f(5), is(25));
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+    @Test
+    public void methodReference() {
+        Func lambda = Math::max;
+
+        assertThat(lambda.f(73, 42), is(73));
+    }
 
 
 
@@ -321,25 +209,9 @@ public class Lambdas {
 
     @Test
     public void nonStaticMethodRef() {
-        System.out.println(testName.getMethodName());
         ToIntFunction<String> f = "abacaba"::compareTo;
-        System.out.println(f.applyAsInt("a"));
-        System.out.println(f.applyAsInt("abacaba"));
-        System.out.println(f.applyAsInt("b"));
-        System.out.println("---------------------");
-    }
-
-
-
-
-
-
-
-
-    @Test
-    public void random() {
-        System.out.println(testName.getMethodName());
-        new Random().ints(5L).mapToObj(Integer::toString).forEach(System.out::println);
-        System.out.println("---------------------");
+        assertTrue(f.applyAsInt("a") > 0);
+        assertThat(f.applyAsInt("abacaba"), is(0));
+        assertTrue(f.applyAsInt("b") < 0);
     }
 }

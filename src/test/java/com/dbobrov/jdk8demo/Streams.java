@@ -1,10 +1,12 @@
 package com.dbobrov.jdk8demo;
 
+import org.hamcrest.core.Is;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.List;
 import java.util.OptionalInt;
+import java.util.Random;
 import java.util.stream.IntStream;
 
 import static java.util.Arrays.asList;
@@ -129,5 +131,28 @@ public class Streams {
         g[2] = asList(1, 3);
         g[3] = asList(1, 2);
         g[4] = asList(1);
+    }
+
+
+
+
+
+
+
+
+
+    @Test
+    public void randomLib() {
+        new Random().ints(5L).mapToObj(Integer::toString).forEach(System.out::println);
+    }
+
+    @Test
+    public void builder() {
+        IntStream.Builder builder = IntStream.builder();
+        for (int i = 0; i < 10; i++) {
+            builder.add(i);
+        }
+        IntStream stream = builder.build();
+        assertThat(stream.sum(), Is.is(10 * 9 / 2));
     }
 }
