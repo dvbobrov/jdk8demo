@@ -4,10 +4,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.*;
-import java.util.function.Function;
-import java.util.function.IntUnaryOperator;
-import java.util.function.ToIntBiFunction;
-import java.util.function.ToIntFunction;
+import java.util.function.*;
 import java.util.stream.IntStream;
 
 import static org.hamcrest.core.Is.is;
@@ -85,13 +82,13 @@ public class Lambdas {
 
     @Test
     public void libraryLambdaClasses() {
-        Function<String, Integer> function = String::length;
+        Function<String, Integer> function = t -> t.length();
         assertThat(function.apply("abacaba"), is(7));
 
-        ToIntFunction<String> toIntFunction = String::length;
+        ToIntFunction<String> toIntFunction = value -> value.length();
         assertThat(toIntFunction.applyAsInt("abacaba"), is(7));
 
-        ToIntBiFunction<Integer, Integer> max = Math::max;
+        ToIntBiFunction<Integer, Integer> max = (t, u) -> Math.max(t, u);
         assertThat(max.applyAsInt(73, 42), is(73));
     }
 
@@ -115,14 +112,10 @@ public class Lambdas {
 
 
 
-    // :(
-    private IntUnaryOperator fib /* = (n) -> n < 2 ? 1 :
-                fib.applyAsInt(n - 1) + fib.applyAsInt(n - 2); */;
-
+    private IntUnaryOperator fib = n -> (n < 2) ? 1 :
+            this.fib.applyAsInt(n - 1) + this.fib.applyAsInt(n - 2);
     @Test
     public void testRecursiveLambda() {
-        fib = (n) -> n < 2 ? 1 : fib.applyAsInt(n - 1) + fib.applyAsInt(n - 2);
-
         assertThat(fib.applyAsInt(5), is(8));
     }
 
@@ -178,6 +171,26 @@ public class Lambdas {
 
 
 
+    @Test
+    public void capture() {
+        int i = 42; /* Should be EFFECTIVELY final */
+
+//        i = 10; // Compile error if it's used in lambdas
+
+//        IntUnaryOperator op = i -> i * i; // Compile error
+        IntUnaryOperator op = j -> j + i;
+        assertThat(op.applyAsInt(10), is(52));
+
+
+//        IntSupplier getAndIncrement = () -> i++; // Compile error
+    }
+
+
+
+
+
+
+
 
 
     @Test
@@ -185,10 +198,9 @@ public class Lambdas {
         Func lambda = Math::max;
 
         assertThat(lambda.f(73, 42), is(73));
+
+//        Function<Integer, String> toString = Integer::toString;
     }
-
-
-
 
 
 

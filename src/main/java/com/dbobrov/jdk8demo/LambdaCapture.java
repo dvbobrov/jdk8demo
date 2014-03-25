@@ -8,46 +8,57 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 
 @BenchmarkMode(Mode.Throughput)
-@Warmup(iterations = 5)
-@Fork(1)
+@Warmup(iterations = 10)
+@Fork(3)
 @Measurement(iterations = 5)
 @State(Scope.Thread)
 @OutputTimeUnit(TimeUnit.MICROSECONDS)
 public class LambdaCapture {
-    private Random random;
-    private String s;
 
     @State(Scope.Thread)
     public static class Env {
-        public String s = "";
+        public String s = "aa";
+        public String t = "aa";
 
         @Setup
         public void setup() {
             Random r = new Random();
-            for (int i = 0; i < 3; i++) {
-                s += 'a' + r.nextInt(26);
+            s += 'a' + r.nextInt('h' - 'a');
+            t += 'g' + r.nextInt('z' - 'g');
+        }
+    }
+
+    @GenerateMicroBenchmark
+    public boolean nonCapturedLambda(Env env) {
+        Predicate<String> f = t -> "aaa".equals(t);
+        return f.test(env.t);
+    }
+
+    @GenerateMicroBenchmark
+    public boolean capturedLambda(Env env) {
+        Predicate<String> f = t -> env.s.equals(t);
+        return f.test(env.t);
+    }
+
+    @GenerateMicroBenchmark
+    public boolean nonCapturedClass(Env env) {
+        Predicate<String> f = new Predicate<String>() {
+            @Override
+            public boolean test(String t) {
+                return "aaa".equals(t);
             }
-        }
-    }
-
-    @Setup
-    public void setup() {
-        random = new Random();
-        s = "";
-        for (int i = 0; i < 3; i++) {
-            s += 'a' + random.nextInt(26);
-        }
+        };
+        return f.test(env.t);
     }
 
     @GenerateMicroBenchmark
-    public boolean nonCaptured() {
-        Predicate<String> f = (t) -> "aaa".equals(t);
-        return f.test(s);
-    }
-
-    @GenerateMicroBenchmark
-    public boolean captured(Env env) {
-        Predicate<String> f = (t) -> env.s.equals(t);
-        return f.test(s);
+    public boolean capturedClass(Env env) {
+        Predicate<String> f = new Predicate<String>() {
+            @Override
+            public boolean test(String t) {
+                return env.s.equals(t);
+            }
+        };
+        return f.test(env.t);
     }
 }
