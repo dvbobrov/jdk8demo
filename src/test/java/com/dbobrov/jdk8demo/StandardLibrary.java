@@ -1,10 +1,12 @@
 package com.dbobrov.jdk8demo;
 
 import org.junit.Test;
+import sun.print.CUPSPrinter;
 
 import java.time.*;
-import java.util.Arrays;
-import java.util.Random;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
+import java.util.*;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -56,13 +58,33 @@ public class StandardLibrary {
         Instant instant = Instant.now(clock);
 
         System.out.println(instant);
+        System.out.println(instant.atZone(ZoneId.of("Europe/Moscow")));
 
         clock = Clock.system(ZoneId.of("Asia/Yekaterinburg"));
         System.out.println(clock.instant());
 
         local = LocalDateTime.now(clock);
         System.out.println(local);
+    }
 
+    @Test
+    public void dateTimeOps() {
+        LocalDateTime local = LocalDateTime.now();
+
+        System.out.println(local);
+        System.out.println(local.plus(5, ChronoUnit.MINUTES));
+        System.out.println(local.plusDays(10));
+        System.out.println(local.truncatedTo(ChronoUnit.HOURS));
+    }
+
+
+    @Test
+    public void dateTimeConv() {
+        Calendar calendar = Calendar.getInstance();
+        System.out.println(calendar.toInstant());
+
+        Date date = new Date();
+        System.out.println(date.toInstant());
 
     }
 }
